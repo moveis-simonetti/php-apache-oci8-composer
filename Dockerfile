@@ -1,7 +1,6 @@
 # Container Base
 FROM php:5.5-apache
 
-
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
 
@@ -57,10 +56,6 @@ RUN mkdir -p /opt/oci8 \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 # Run composer install
-CMD usermod -u 1000 www-data \
-    && cd /var/www/html && composer install && rm -rf var/cache/* var/logs/* \
-    && chown -R www-data:www-data /var/www/html/var/cache && chmod 777 /var/www/html/var/cache \
-    && chown -R www-data:www-data /var/www/html/var/logs && chmod 777 /var/www/html/var/logs \
-    && apache2-foreground
+CMD /usr/bin/apache-run
 
 EXPOSE 80
