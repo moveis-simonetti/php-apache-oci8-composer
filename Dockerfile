@@ -4,7 +4,7 @@ FROM php:5.5-apache
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
 
-COPY apache-run.sh /usr/bin/apache-run
+ADD apache-run.sh /usr/bin/apache-run
 
 RUN chmod a+x /usr/bin/apache-run
 
