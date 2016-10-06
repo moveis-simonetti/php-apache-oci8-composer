@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-de
        libmcrypt-dev libpng12-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
        libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev
 
+RUN a2enmod rewrite
+
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure hash --with-mhash \
