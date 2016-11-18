@@ -58,7 +58,7 @@ RUN mkdir -p /opt/oci8 \
 RUN mkdir -p /tmp/redis \
     && cd /tmp/redis \
     && wget https://pecl.php.net/get/redis-2.2.8.tgz \
-    && tar -jxvf redis-2.2.8.tgz \
+    && tar -xvf redis-2.2.8.tgz \
     && cd redis-2.2.8 \
     && phpize && ./configure \
     && make && make install \
