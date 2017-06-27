@@ -4,7 +4,8 @@ FROM php:7.1-apache
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
 
-ADD apache-run.sh /usr/bin/apache-run
+COPY configs/ports.conf /etc/apache2/ports.conf
+COPY apache-run.sh /usr/bin/apache-run
 
 RUN chmod a+x /usr/bin/apache-run
 
@@ -54,10 +55,20 @@ RUN mkdir -p /opt/oci8 \
     && make install \
     && echo "extension=/tmp/oci8-2.1.2/modules/oci8.so" >> /usr/local/etc/php/conf.d/oci8.ini
 
+# Install redis
+RUN mkdir -p /tmp/redis \
+    && cd /tmp/redis \
+    && wget https://pecl.php.net/get/redis-2.2.8.tgz \
+    && tar -xvf redis-2.2.8.tgz \
+    && cd redis-2.2.8 \
+    && phpize && ./configure \
+    && make && make install \
+    && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 # Run composer install
 CMD /usr/bin/apache-run
 
-EXPOSE 80
+EXPOSE 8080
