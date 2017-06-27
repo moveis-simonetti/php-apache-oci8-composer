@@ -58,9 +58,9 @@ RUN mkdir -p /opt/oci8 \
 # Install redis
 RUN mkdir -p /tmp/redis \
     && cd /tmp/redis \
-    && wget https://pecl.php.net/get/redis-2.2.8.tgz \
-    && tar -xvf redis-2.2.8.tgz \
-    && cd redis-2.2.8 \
+    && wget https://pecl.php.net/get/redis-3.1.2.tgz \
+    && tar -xvf redis-3.1.2.tgz \
+    && cd redis-3.1.2 \
     && phpize && ./configure \
     && make && make install \
     && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
