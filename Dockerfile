@@ -46,14 +46,14 @@ RUN mkdir -p /opt/oci8 \
     && ln -s libclntsh.so.12.1 libclntsh.so \
     && ln -s libocci.so.12.1 libocci.so \
     && cd /tmp \
-    && wget https://pecl.php.net/get/oci8-2.1.2.tgz \
-    && tar xzf oci8-2.1.2.tgz \
-    && cd oci8-2.1.2 \
+    && wget https://pecl.php.net/get/oci8-2.1.4.tgz \
+    && tar xzf oci8-2.1.4.tgz \
+    && cd oci8-2.1.4 \
     && phpize \
     && ./configure --with-oci8=shared,instantclient,/opt/oci8/instantclient_12_1/ \
     && make \
     && make install \
-    && echo "extension=/tmp/oci8-2.1.2/modules/oci8.so" >> /usr/local/etc/php/conf.d/oci8.ini
+    && echo "extension=/tmp/oci8-2.1.4/modules/oci8.so" >> /usr/local/etc/php/conf.d/oci8.ini
 
 # Install redis
 RUN mkdir -p /tmp/redis \
