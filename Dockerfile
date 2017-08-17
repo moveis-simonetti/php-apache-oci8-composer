@@ -9,10 +9,14 @@ COPY apache-run.sh /usr/bin/apache-run
 
 RUN chmod a+x /usr/bin/apache-run
 
+RUN echo "deb http://apt.vandenbrand.org/debian testing main" >> /etc/apt/sources.list \
+    && curl -fsSL http://apt.vandenbrand.org/apt.vandenbrand.org.gpg.key | apt-key add -
+
 # Install libs
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
        libmcrypt-dev libpng12-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
-       libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev
+       libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
+       rabbitmq-cli-consumer
 
 RUN a2enmod rewrite
 
@@ -64,13 +68,6 @@ RUN mkdir -p /tmp/redis \
     && phpize && ./configure \
     && make && make install \
     && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
-
-# Install blackfire.io
-RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
-    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
-    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
-    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
