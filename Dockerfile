@@ -57,7 +57,7 @@ RUN mkdir -p /opt/oci8 \
 
 # Install redis
 RUN pecl install redis \
-    && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/oci8.ini
+    && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
