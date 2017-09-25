@@ -1,5 +1,5 @@
 # Container Base
-FROM php:5.5-apache
+FROM php:7.1-apache
 
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
@@ -22,16 +22,16 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j$(nproc) iconv bcmath mcrypt \
-        gd mysql pdo_mysql calendar curl exif ftp gettext \
+        gd pdo_mysql calendar curl exif ftp gettext \
         hash xsl ldap intl imap pdo_sqlite mbstring \
         mcrypt pcntl readline shmop soap sockets wddx zip
 
 # Install ssh2
-RUN wget https://www.libssh2.org/download/libssh2-1.7.0.tar.gz && wget https://pecl.php.net/get/ssh2-0.13.tgz \
-    && tar vxzf libssh2-1.7.0.tar.gz && tar vxzf ssh2-0.13.tgz \
+RUN wget https://www.libssh2.org/download/libssh2-1.7.0.tar.gz && wget https://pecl.php.net/get/ssh2-1.1.2.tgz \
+    && tar vxzf libssh2-1.7.0.tar.gz && tar vxzf ssh2-1.1.2.tgz \
     && cd libssh2-1.7.0 && ./configure \
     && make && make install \
-    && cd ../ssh2-0.13 && phpize && ./configure --with-ssh2 \
+    && cd ../ssh2-1.1.2 && phpize && ./configure --with-ssh2 \
     && make && make install \
     && echo "extension=ssh2.so" >> /usr/local/etc/php/conf.d/ssh2.ini
 
@@ -46,24 +46,18 @@ RUN mkdir -p /opt/oci8 \
     && ln -s libclntsh.so.12.1 libclntsh.so \
     && ln -s libocci.so.12.1 libocci.so \
     && cd /tmp \
-    && wget http://pecl.php.net/get/oci8-2.0.8.tgz \
-    && tar xzf oci8-2.0.8.tgz \
-    && cd oci8-2.0.8 \
+    && wget https://pecl.php.net/get/oci8-2.1.7.tgz \
+    && tar xzf oci8-2.1.7.tgz \
+    && cd oci8-2.1.7 \
     && phpize \
     && ./configure --with-oci8=shared,instantclient,/opt/oci8/instantclient_12_1/ \
     && make \
     && make install \
-    && echo "extension=/tmp/oci8-2.0.8/modules/oci8.so" >> /usr/local/etc/php/conf.d/oci8.ini
+    && echo "extension=/tmp/oci8-2.1.7/modules/oci8.so" >> /usr/local/etc/php/conf.d/oci8.ini
 
 # Install redis
-RUN mkdir -p /tmp/redis \
-    && cd /tmp/redis \
-    && wget https://pecl.php.net/get/redis-2.2.8.tgz \
-    && tar -xvf redis-2.2.8.tgz \
-    && cd redis-2.2.8 \
-    && phpize && ./configure \
-    && make && make install \
-    && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
+RUN pecl install redis \
+    && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/oci8.ini
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
