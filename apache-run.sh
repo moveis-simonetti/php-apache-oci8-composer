@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ $XDEBUG_ENABLED == true ]]; then
-	echo "zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
+	echo "zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini
 	echo "xdebug.var_display_max_depth=15" >> /usr/local/etc/php/conf.d/xdebug.ini
 fi
 
