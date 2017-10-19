@@ -62,6 +62,11 @@ RUN pecl install redis \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
+# Install XDebug
+RUN cd /tmp && wget http://xdebug.org/files/xdebug-2.5.4.tgz && tar -xvzf xdebug-2.5.4.tgz && cd xdebug-2.5.4 \
+    && phpize && ./configure && make && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303 \
+    && rm -rf /tmp/xdebug-2.5.4.* /tmp/xdebug-2.5.4/
+
 # Run composer install
 CMD /usr/bin/apache-run
 
