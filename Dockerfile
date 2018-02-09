@@ -11,7 +11,7 @@ RUN chmod a+x /usr/bin/apache-run
 
 # Install libs
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
-       libmcrypt-dev libpng12-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
+       libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
        libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev
 
 RUN a2enmod rewrite
