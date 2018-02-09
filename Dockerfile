@@ -27,13 +27,10 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
         pcntl shmop soap sockets wddx
 
 # Install ssh2
-RUN wget https://www.libssh2.org/download/libssh2-1.8.0.tar.gz && wget https://pecl.php.net/get/ssh2-1.1.2.tgz \
-    && tar vxzf libssh2-1.8.0.tar.gz && tar vxzf ssh2-1.1.2.tgz \
-    && cd libssh2-1.8.0 && ./configure \
-    && make && make install \
-    && cd ../ssh2-1.1.2 && phpize && ./configure --with-ssh2 \
-    && make && make install \
-    && echo "extension=ssh2.so" >> /usr/local/etc/php/conf.d/ssh2.ini
+RUN apt-get update && apt-get -y install libssh2-1-dev && \
+    pecl install -f ssh2-alpha && \
+    echo "extension=ssh2.so" >> /usr/local/etc/php/conf.d/ssh2.ini && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install oci8
 RUN apt-get update && apt-get -y install wget bsdtar libaio1 && \
