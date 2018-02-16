@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ $XDEBUG_ENABLED == true ]]; then
-	echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini
+	docker-php-ext-enable xdebug
 	echo "xdebug.var_display_max_depth=5" >> /usr/local/etc/php/conf.d/xdebug.ini
 fi
 

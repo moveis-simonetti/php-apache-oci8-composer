@@ -48,7 +48,7 @@ RUN apt-get update && apt-get -y install wget bsdtar libaio1 && \
 
 # Install redis
 RUN pecl install redis \
-    && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
+    && docker-php-ext-enable redis
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
