@@ -24,7 +24,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
     && docker-php-ext-install -j$(nproc) bcmath \
         gd pdo_mysql calendar exif gettext \
         xsl ldap intl imap \
-        pcntl shmop soap sockets wddx
+        pcntl shmop soap sockets wddx zip
 
 # Install ssh2
 RUN apt-get update && apt-get -y install libssh2-1-dev && \
