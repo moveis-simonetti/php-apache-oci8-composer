@@ -3,6 +3,9 @@ FROM php:7.0-apache
 
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
+ENV NR_ENABLED=false
+ENV NR_APP_NAME=""
+ENV NR_LICENSE_KEY=""
 
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY apache-run.sh /usr/bin/apache-run
@@ -58,6 +61,10 @@ RUN mkdir -p /opt/oci8 \
 # Install redis
 RUN pecl install redis \
     && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
+
+RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
+    && wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add - \
+    && apt-get update && apt-get install newrelic-php5
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
