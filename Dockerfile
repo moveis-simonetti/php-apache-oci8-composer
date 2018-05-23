@@ -65,7 +65,7 @@ RUN pecl install redis \
 RUN echo "---> Adding Support for NewRelic" && \
     mkdir /tmp/newrelic /scripts/ && \
     cd /tmp/newrelic && \
-    wget -r -l1 -nd -A"linux-musl.tar.gz" https://download.newrelic.com/php_agent/release/ && \
+    wget -r -l1 -nd -A"linux.tar.gz" https://download.newrelic.com/php_agent/release/ && \
     gzip -dc newrelic*.tar.gz | tar xf - && \
     cd newrelic-php5* && \
     rm -f /usr/local/lib/php/extensions/no-debug-non-zts-20151012/newrelic.so && \
