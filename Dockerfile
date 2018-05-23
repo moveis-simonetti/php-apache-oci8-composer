@@ -62,9 +62,17 @@ RUN mkdir -p /opt/oci8 \
 RUN pecl install redis \
     && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
 
-RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
-    && wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add - \
-    && apt-get update && apt-get install newrelic-php5
+RUN echo "---> Adding Support for NewRelic" && \
+    mkdir /tmp/newrelic /scripts/ && \
+    cd /tmp/newrelic && \
+    wget -r -l1 -nd -A"linux-musl.tar.gz" https://download.newrelic.com/php_agent/release/ && \
+    gzip -dc newrelic*.tar.gz | tar xf - && \
+    cd newrelic-php5* && \
+    rm -f /usr/local/lib/php/extensions/no-debug-non-zts-20151012/newrelic.so && \
+    cp ./agent/x64/newrelic-20151012.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/newrelic.so && \
+    cp ./daemon/newrelic-daemon.x64 /usr/bin/newrelic-daemon && \
+    cp ./scripts/newrelic.ini.template /scripts/newrelic.ini && \
+    mkdir /var/log/newrelic
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
