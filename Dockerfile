@@ -3,9 +3,13 @@ FROM php:7.0-apache
 
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
+ENV XDEBUG_ENABLED=false
 ENV NR_ENABLED=false
 ENV NR_APP_NAME=""
 ENV NR_LICENSE_KEY=""
+ENV SESSION_HANDLER=false
+ENV SESSION_HANDLER_NAME=""
+ENV SESSION_HANDLER_PATH=""
 
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY apache-run.sh /usr/bin/apache-run
