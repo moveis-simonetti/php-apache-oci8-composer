@@ -42,26 +42,6 @@ RUN wget https://www.libssh2.org/download/libssh2-1.7.0.tar.gz && wget https://p
     && make && make install \
     && echo "extension=ssh2.so" >> /usr/local/etc/php/conf.d/ssh2.ini
 
-# Install oci8
-RUN mkdir -p /opt/oci8 \
-    && cd /opt/oci8 \
-    && wget https://s3.amazonaws.com/simonetti-tests/oci8/instantclient-basic-linux.x64-12.1.0.2.0.zip \
-    && wget https://s3.amazonaws.com/simonetti-tests/oci8/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
-    && unzip instantclient-sdk-linux.x64-12.1.0.2.0.zip \
-    && unzip instantclient-basic-linux.x64-12.1.0.2.0.zip \
-    && cd instantclient_12_1/ \
-    && ln -s libclntsh.so.12.1 libclntsh.so \
-    && ln -s libocci.so.12.1 libocci.so \
-    && cd /tmp \
-    && wget https://pecl.php.net/get/oci8-2.1.7.tgz \
-    && tar xzf oci8-2.1.7.tgz \
-    && cd oci8-2.1.7 \
-    && phpize \
-    && ./configure --with-oci8=shared,instantclient,/opt/oci8/instantclient_12_1/ \
-    && make \
-    && make install \
-    && echo "extension=/tmp/oci8-2.1.7/modules/oci8.so" >> /usr/local/etc/php/conf.d/oci8.ini
-
 # Install redis
 RUN pecl install redis \
     && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
