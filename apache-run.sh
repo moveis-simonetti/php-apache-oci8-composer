@@ -16,11 +16,4 @@ if [[ $SESSION_HANDLER == true ]]; then
 	echo "session.save_path = $SESSION_HANDLER_PATH" >> /usr/local/etc/php/conf.d/session-handler.ini
 fi
 
-composer install && rm -rf var/cache/* var/logs/* \
-	&& mkdir -p /var/www/html/var/cache \
-	&& mkdir -p /var/www/html/var/logs \
-	&& mkdir -p /var/www/html/var/sessions \
-    && chown -R www-data:www-data /var/www/html/var/cache && chmod 777 /var/www/html/var/cache \
-    && chown -R www-data:www-data /var/www/html/var/logs && chmod 777 /var/www/html/var/logs \
-    && chown -R www-data:www-data /var/www/html/var/sessions && chmod 777 /var/www/html/var/sessions \
-    && apache2-foreground
+apache2-foreground

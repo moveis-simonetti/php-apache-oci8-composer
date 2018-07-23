@@ -41,11 +41,8 @@ RUN echo "---> Adding Support for NewRelic" && \
     cp ./scripts/newrelic.ini.template /scripts/newrelic.ini && \
     mkdir /var/log/newrelic
 
-RUN echo "---> Adding the runner user" && \
-    adduser --disabled-password -u 1000 runner && \
-    mkdir -p /var/www/html && \
-    chown -R runner:runner /var/www/html && \
-    wget -O /tini https://github.com/krallin/tini/releases/download/v0.16.1/tini-static && \
+RUN echo "---> Adding Tini" && \
+    wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
     chmod +x /tini
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
@@ -57,10 +54,12 @@ COPY apache-run.sh /usr/bin/apache-run
 
 RUN chmod a+x /usr/bin/apache-run
 
-USER runner
+USER www-data
 
 WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-ENTRYPOINT ["/tini", "--", "/usr/bin/apache-run"]
+ENTRYPOINT ["/tini", "--"]
+
+CMD ["/usr/bin/apache-run"]
