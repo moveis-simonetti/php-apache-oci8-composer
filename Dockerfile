@@ -58,4 +58,4 @@ RUN pecl install xdebug
 # Run composer install
 CMD /usr/bin/apache-run
 
-EXPOSE 8080
+EXPOSE 8080 9001
