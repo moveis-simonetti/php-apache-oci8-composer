@@ -16,8 +16,7 @@ if [[ $SESSION_HANDLER == true ]]; then
 	echo "session.save_path = $SESSION_HANDLER_PATH" >> /usr/local/etc/php/conf.d/session-handler.ini
 fi
 
-usermod -u 1000 www-data \
-    && cd /var/www/html && composer install && rm -rf var/cache/* var/logs/* \
+composer install && rm -rf var/cache/* var/logs/* \
 	&& mkdir -p /var/www/html/var/cache \
 	&& mkdir -p /var/www/html/var/logs \
 	&& mkdir -p /var/www/html/var/sessions \

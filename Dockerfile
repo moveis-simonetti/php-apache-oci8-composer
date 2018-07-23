@@ -11,19 +11,12 @@ ENV SESSION_HANDLER=false
 ENV SESSION_HANDLER_NAME=""
 ENV SESSION_HANDLER_PATH=""
 
-COPY configs/ports.conf /etc/apache2/ports.conf
-COPY apache-run.sh /usr/bin/apache-run
-
-RUN chmod a+x /usr/bin/apache-run
-
-# Install libs
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
        libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
        libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev
 
 RUN a2enmod rewrite
 
-# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure hash --with-mhash \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -33,7 +26,6 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
         hash xsl ldap intl imap pdo_sqlite mbstring \
         mcrypt pcntl readline shmop soap sockets wddx zip
 
-# Install redis
 RUN pecl install redis \
     && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
 
@@ -49,16 +41,26 @@ RUN echo "---> Adding Support for NewRelic" && \
     cp ./scripts/newrelic.ini.template /scripts/newrelic.ini && \
     mkdir /var/log/newrelic
 
-# Install Composer
+RUN echo "---> Adding the runner user" && \
+    adduser --disabled-password -u 1000 runner && \
+    mkdir -p /var/www/html && \
+    chown -R runner:runner /var/www/html && \
+    wget -O /tini https://github.com/krallin/tini/releases/download/v0.16.1/tini-static && \
+    chmod +x /tini
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-# Install XDebug
 RUN pecl install xdebug
 
-USER www-data
+COPY configs/ports.conf /etc/apache2/ports.conf
+COPY apache-run.sh /usr/bin/apache-run
 
-# Run composer install
+RUN chmod a+x /usr/bin/apache-run
 
-ENTRYPOINT ["/usr/bin/apache-run"]
+USER runner
+
+WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
+
+ENTRYPOINT ["/tini", "--", "/usr/bin/apache-run"]
