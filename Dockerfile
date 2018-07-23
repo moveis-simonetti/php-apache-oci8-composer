@@ -55,7 +55,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # Install XDebug
 RUN pecl install xdebug
 
+USER www-data
+
 # Run composer install
-CMD /usr/bin/apache-run
+
+ENTRYPOINT ["/usr/bin/apache-run"]
 
 EXPOSE 8080 9001
