@@ -16,4 +16,12 @@ if [[ $SESSION_HANDLER == true ]]; then
 	echo "session.save_path = $SESSION_HANDLER_PATH" | sudo tee -a /usr/local/etc/php/conf.d/session-handler.ini
 fi
 
+sudo rm -rf var/cache/* var/logs/* \
+	&& sudo mkdir -p /var/www/html/var/cache \
+	&& sudo mkdir -p /var/www/html/var/logs \
+	&& sudo mkdir -p /var/www/html/var/sessions \
+    && sudo chown -R www-data:www-data /var/www/html/var/cache && chmod 777 /var/www/html/var/cache \
+    && sudo chown -R www-data:www-data /var/www/html/var/logs && chmod 777 /var/www/html/var/logs \
+    && sudo chown -R www-data:www-data /var/www/html/var/sessions && chmod 777 /var/www/html/var/sessions \
+
 apache2-foreground
