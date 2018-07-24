@@ -13,7 +13,8 @@ ENV SESSION_HANDLER_PATH=""
 
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
        libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
-       libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev
+       libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
+       sudo
 
 RUN a2enmod rewrite
 
@@ -39,11 +40,16 @@ RUN echo "---> Adding Support for NewRelic" && \
     cp ./agent/x64/newrelic-20151012.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012/newrelic.so && \
     cp ./daemon/newrelic-daemon.x64 /usr/bin/newrelic-daemon && \
     cp ./scripts/newrelic.ini.template /scripts/newrelic.ini && \
-    mkdir /var/log/newrelic
+    mkdir /var/log/newrelic &&  \
+    chown -R www-data:www-data /var/log/newrelic && \
+    rm -rf /tmp/*
 
 RUN echo "---> Adding Tini" && \
     wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
     chmod +x /tini
+
+RUN echo "---> Config sudoers" && \
+    echo "www-data  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
@@ -60,6 +66,4 @@ WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-ENTRYPOINT ["/tini", "--"]
-
-CMD ["/usr/bin/apache-run"]
+CMD ["/tini", "--", "/usr/bin/apache-run"]
