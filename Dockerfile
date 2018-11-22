@@ -51,6 +51,9 @@ RUN echo "---> Adding Tini" && \
 RUN echo "---> Config sudoers" && \
     echo "www-data  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers
 
+RUN echo "---> Fix Logs permissions" && \
+    chown -R www-data:www-data /var/log/apache2
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 RUN pecl install xdebug
