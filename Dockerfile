@@ -18,7 +18,8 @@ ENV SESSION_HANDLER_PATH=""
 RUN apt-get update && apt-get install -y wget vim supervisor libfreetype6-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
-    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip
+    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip \
+    librabbitmq-dev
 
 RUN a2enmod rewrite
 
@@ -40,6 +41,10 @@ RUN echo "---> Adding xDebug" && \
 RUN echo "---> Adding Zip" && \
     pecl install zip && \
     docker-php-ext-enable zip
+
+RUN echo "---> Adding AMQP" && \
+    pecl install amqp && \
+    docker-php-ext-enable amqp
 
 RUN echo "---> Configure Opcache" && \
     docker-php-ext-install opcache && \
