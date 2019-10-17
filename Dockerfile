@@ -3,13 +3,16 @@ FROM php:7.2-apache
 
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
-ENV XDEBUG_ENABLED=false
 ENV NR_ENABLED=false
 ENV NR_APP_NAME=""
 ENV NR_LICENSE_KEY=""
 ENV SESSION_HANDLER=false
 ENV SESSION_HANDLER_NAME=""
 ENV SESSION_HANDLER_PATH=""
+ENV XDEBUG_AUTOSTART=false
+ENV XDEBUG_CONNECT_BACK=true
+ENV XDEBUG_ENABLED=false
+ENV XDEBUG_IDEKEY="docker"
 
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
