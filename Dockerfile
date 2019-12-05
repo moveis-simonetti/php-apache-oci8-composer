@@ -59,7 +59,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends --no-install
     && sudo apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests newrelic-php5 \
     && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=1 newrelic-install install \
     && chown www-data:www-data /usr/local/etc/php/conf.d/newrelic.ini && chmod a+rw /usr/local/etc/php/conf.d/newrelic.ini \
-    && apt-get remove newrelic-php5 gnupg2 && rm -rf /var/lib/apt/lists/*
+    && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/*
 
 RUN echo "---> Adding Tini" && \
     wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
