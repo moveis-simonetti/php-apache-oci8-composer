@@ -23,7 +23,7 @@ ENV PHP_OPENSSL=1
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
-    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip librabbitmq-dev && \
+    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite
