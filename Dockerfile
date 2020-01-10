@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y wget vim supervisor libfreetype6-dev li
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
     sudo zlib1g zlib1g-dev libzip4 libzip-dev zip \
-    librabbitmq-dev
+    librabbitmq-dev libmemcached-dev
 
 RUN a2enmod rewrite
 
@@ -37,6 +37,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 RUN pecl install redis \
     && docker-php-ext-enable redis
+
+RUN pecl install memcached \
+    && echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini
 
 RUN echo "---> Adding xDebug" && \
     pecl install xdebug${XDEBUG_VERSION}
