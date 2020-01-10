@@ -17,7 +17,7 @@ ENV XDEBUG_IDEKEY="docker"
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
-    sudo
+    sudo libmemcached-dev
 
 RUN a2enmod rewrite
 
@@ -32,6 +32,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 RUN pecl install redis \
     && echo "extension=redis.so" >> /usr/local/etc/php/conf.d/redis.ini
+
+RUN pecl install memcached \
+    && echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini
 
 RUN echo "---> Adding Support for NewRelic" && \
     mkdir /tmp/newrelic /scripts/ && \
