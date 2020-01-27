@@ -5,7 +5,7 @@ if [[ ${XDEBUG_ENABLED} == true ]]; then
     echo "xdebug.var_display_max_depth=5" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
     echo "xdebug.idekey=${XDEBUG_IDEKEY}" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
     echo "xdebug.remote_enable=1" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    echo "xdebug.remote_port=9000" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
+    echo "xdebug.remote_port=${XDEBUG_REMOTE_PORT}" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
 
     [[ ${XDEBUG_AUTOSTART} == true ]] && {
         echo "xdebug.remote_autostart=on" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
