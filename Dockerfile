@@ -16,7 +16,8 @@ ENV XDEBUG_AUTOSTART=false
 ENV XDEBUG_CONNECT_BACK=true
 ENV XDEBUG_ENABLED=false
 ENV XDEBUG_IDEKEY="docker"
-ENV XDEBUG_VERSION="-2.8.1"
+ENV XDEBUG_VERSION=""
+ENV XDEBUG_REMOTE_PORT=9000
 ENV PHP_EXTENSION_WDDX=1
 ENV PHP_OPENSSL=1
 
@@ -38,7 +39,7 @@ RUN echo "---> Adding Redis" && \
     docker-php-ext-enable redis
 
 RUN echo "---> Adding xDebug" && \
-    pecl install xdebug${XDEBUG_VERSION}
+    pecl install "xdebug${XDEBUG_VERSION}"
 
 RUN echo "---> Adding Zip" && \
     pecl install zip && \
