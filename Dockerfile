@@ -13,6 +13,7 @@ ENV XDEBUG_AUTOSTART=false
 ENV XDEBUG_CONNECT_BACK=true
 ENV XDEBUG_ENABLED=false
 ENV XDEBUG_IDEKEY="docker"
+ENV XDEBUG_VERSION="-2.7.0beta1"
 
 RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-dev libjpeg62-turbo-dev \
        libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
@@ -56,7 +57,7 @@ RUN echo "---> Config sudoers" && \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-RUN pecl install xdebug
+RUN pecl install "xdebug${XDEBUG_VERSION}"
 
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY apache-run.sh /usr/bin/apache-run
