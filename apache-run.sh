@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if [[ $XDEBUG_ENABLED == true ]]; then
+    sudo rm -f /usr/local/etc/php/conf.d/xdebug.ini || true
     echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/xdebug.so" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
     echo "xdebug.var_display_max_depth=5" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
     echo "xdebug.idekey=${XDEBUG_IDEKEY}" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
