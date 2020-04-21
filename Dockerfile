@@ -1,5 +1,5 @@
 # Container Base
-FROM php:7.4.0-apache
+FROM php:7.4-apache
 
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
