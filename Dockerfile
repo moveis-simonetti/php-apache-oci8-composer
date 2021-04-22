@@ -1,15 +1,3 @@
-FROM php:8.0.0-alpine AS ext-amqp
-
-ENV EXT_AMQP_VERSION=master
-
-RUN docker-php-source extract \
-    && apk -Uu add git rabbitmq-c-dev \
-    && git clone --branch $EXT_AMQP_VERSION --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
-    && docker-php-ext-install amqp
-
-RUN ls -al /usr/local/lib/php/extensions/
-
 # Container Base
 FROM php:8.0.0-apache
 
@@ -57,9 +45,13 @@ RUN echo "---> Adding Zip" && \
     pecl install zip && \
     docker-php-ext-enable zip
 
-RUN echo "---> Adding AMQp" && ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
-COPY --from=ext-amqp /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini
-COPY --from=ext-amqp /usr/local/lib/php/extensions/no-debug-non-zts-20200930/amqp.so /usr/local/lib/php/extensions/no-debug-non-zts-20200930/amqp.so
+RUN echo "---> Adding AMQp" && \
+    apt-get update && apt-get install -y -f librabbitmq-dev libssh-dev \
+    && docker-php-source extract \
+    && mkdir /usr/src/php/ext/amqp \
+    && curl -L https://github.com/php-amqp/php-amqp/archive/master.tar.gz | tar -xzC /usr/src/php/ext/amqp --strip-components=1 \
+    && docker-php-ext-install amqp \
+    && docker-php-ext-enable amqp
 
 RUN echo "---> Configure Opcache" && \
     docker-php-ext-install opcache && \
