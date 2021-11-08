@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-de
        libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
        sudo
 
-RUN a2enmod rewrite
+RUN a2enmod rewrite unique_id
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-configure hash --with-mhash \
@@ -61,6 +61,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 RUN pecl install "xdebug${XDEBUG_VERSION}"
 
 COPY configs/ports.conf /etc/apache2/ports.conf
+COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY apache-run.sh /usr/bin/apache-run
 
 RUN chmod a+x /usr/bin/apache-run
