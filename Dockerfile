@@ -4,6 +4,7 @@ FROM php:7.1-apache
 ENV http_proxy ${HTTP_PROXY}
 ENV https_proxy ${HTTP_PROXY}
 
+COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY apache-run.sh /usr/bin/apache-run
 
@@ -18,7 +19,7 @@ RUN apt-get update && apt-get install -y wget vim supervisor zip libfreetype6-de
        libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
        rabbitmq-cli-consumer
 
-RUN a2enmod rewrite
+RUN a2enmod rewrite unique_id
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
