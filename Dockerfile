@@ -2,8 +2,6 @@
 FROM php:8.1-apache
 
 ENV \
-    http_proxy ${HTTP_PROXY} \
-    https_proxy ${HTTP_PROXY} \
     NR_ENABLED=false \
     NR_APP_NAME="" \
     NR_LICENSE_KEY="" \
