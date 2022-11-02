@@ -83,8 +83,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY apache-run.sh /usr/bin/apache-run
+COPY ./bin /usr/bin/
 
-RUN chmod a+x /usr/bin/apache-run
+RUN chmod a+x /usr/bin/apache-run /usr/bin/xdebug-set-mode
 
 USER www-data
 
