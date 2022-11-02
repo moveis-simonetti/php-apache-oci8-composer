@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+if [[ "${TRACE-0}" == "1" ]]; then
+    set -o xtrace
+fi
+
+if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
+    echo "Usage: $0 [mode]
+
+This script will change PHP INI files to enable the mode set in the argument,
+if no argument is set it will fallback to \$XDEBUG_MODE env.
+
+If the mode is 'debug' you will need to set the following env vars:
+    - XDEBUG_IDEKEY
+    - XDEBUG_CLIENT_PORT
+    - XDEBUG_AUTOSTART (optional)
+    - XDEBUG_CONNECT_BACK (optional)
+"
+    exit
+fi
+
+export ini_file=/usr/local/etc/php/conf.d/xdebug.ini
+export MODE=${1:-off}
+rm -f $ini_file || true
+
+[[ $MODE == "off" ]] && exit
+
+echo "zend_extension=xdebug.so" | tee -a $ini_file
+echo "xdebug.mode=$MODE" | tee -a $ini_file
+echo "xdebug.var_display_max_depth=5" | tee -a $ini_file
+
+[[ $MODE =~ "debug" ]] && {
+    echo "xdebug.idekey=${XDEBUG_IDEKEY}" | tee -a $ini_file
+
+    client_port=${XDEBUG_REMOTE_PORT:-${XDEBUG_CLIENT_PORT:-9003}}
+    echo "xdebug.client_port=$client_port" | tee -a $ini_file
+
+    autostart="no"
+    [[ ${XDEBUG_AUTOSTART} == true ]] && autostart="yes"
+    echo "xdebug.start_with_request=$autostart" | tee -a $ini_file
+
+    back="0"
+    [[ ${XDEBUG_CONNECT_BACK} == true ]] && back="1"
+    echo "xdebug.discover_client_host=$back" | tee -a $ini_file
+}
