@@ -32,17 +32,17 @@ echo "zend_extension=xdebug.so" | tee -a $ini_file
 echo "xdebug.mode=$MODE" | tee -a $ini_file
 echo "xdebug.var_display_max_depth=5" | tee -a $ini_file
 
-[[ $MODE =~ "debug" ]] && {
-    echo "xdebug.idekey=${XDEBUG_IDEKEY}" | tee -a $ini_file
+[[ ! $MODE =~ "debug" ]] && exit
 
-    client_port=${XDEBUG_REMOTE_PORT:-${XDEBUG_CLIENT_PORT:-9003}}
-    echo "xdebug.client_port=$client_port" | tee -a $ini_file
+echo "xdebug.idekey=${XDEBUG_IDEKEY}" | tee -a $ini_file
 
-    autostart="no"
-    [[ ${XDEBUG_AUTOSTART} == true ]] && autostart="yes"
-    echo "xdebug.start_with_request=$autostart" | tee -a $ini_file
+client_port=${XDEBUG_REMOTE_PORT:-${XDEBUG_CLIENT_PORT:-9003}}
+echo "xdebug.client_port=$client_port" | tee -a $ini_file
 
-    back="0"
-    [[ ${XDEBUG_CONNECT_BACK} == true ]] && back="1"
-    echo "xdebug.discover_client_host=$back" | tee -a $ini_file
-}
+autostart="no"
+[[ ${XDEBUG_AUTOSTART} == true ]] && autostart="yes"
+echo "xdebug.start_with_request=$autostart" | tee -a $ini_file
+
+back="0"
+[[ ${XDEBUG_CONNECT_BACK} == true ]] && back="1"
+echo "xdebug.discover_client_host=$back" | tee -a $ini_file
