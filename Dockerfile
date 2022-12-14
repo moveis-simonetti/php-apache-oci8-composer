@@ -1,5 +1,5 @@
 # Container Base
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 ENV \
     NR_ENABLED=false \
@@ -56,15 +56,6 @@ RUN echo "---> Configure Opcache" && \
     docker-php-ext-install opcache && \
     echo "opcache.enable=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini && \
     echo "opcache.enable_cli=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
-
-RUN echo "---> Adding NewRelic" && \
-    apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests gnupg2 \
-    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | sudo tee /etc/apt/sources.list.d/newrelic.list \
-    && wget -O- https://download.newrelic.com/548C16BF.gpg | sudo apt-key add - \
-    && sudo apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests newrelic-php5 \
-    && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=1 newrelic-install install \
-    && chown www-data:www-data /usr/local/etc/php/conf.d/newrelic.ini && chmod a+rw /usr/local/etc/php/conf.d/newrelic.ini \
-    && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/*
 
 RUN echo "---> Adding Tini" && \
     wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
