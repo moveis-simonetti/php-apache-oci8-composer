@@ -5,7 +5,7 @@ tag=$(shell git branch | grep \* | cut -d ' ' -f2)
 TAG=$(shell [[ "$(tag)" == "master" ]] && echo "latest" || echo $(tag))
 
 build:
-	docker build . -t $(IMAGE):$(TAG)
+	docker build --pull . -t $(IMAGE):$(TAG)
 
 push: build
 	docker push $(IMAGE):$(TAG)
