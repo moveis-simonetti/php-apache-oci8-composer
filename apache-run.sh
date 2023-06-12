@@ -17,12 +17,7 @@ if [[ ${XDEBUG_ENABLED} == true ]]; then
     } || echo "xdebug.remote_connect_back=0" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
 fi
 
-if [[ ${NR_ENABLED} == true ]]; then
-    sudo sed -i -e "s/"REPLACE_WITH_REAL_KEY"/${NR_LICENSE_KEY}/g" /usr/local/etc/php/conf.d/newrelic.ini
-    sudo sed -i -e "s/PHP Application/${NR_APP_NAME}/g" /usr/local/etc/php/conf.d/newrelic.ini
-else
-    echo "newrelic.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
-fi
+sudo -E newrelic-setup
 
 if [[ ${SESSION_HANDLER} == true ]]; then
     echo "session.save_handler = ${SESSION_HANDLER_NAME}" | sudo tee -a /usr/local/etc/php/conf.d/session-handler.ini
