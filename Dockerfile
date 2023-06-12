@@ -62,7 +62,8 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends --no-install
     && chown www-data:www-data /usr/local/etc/php/conf.d/newrelic.ini && chmod a+rw /usr/local/etc/php/conf.d/newrelic.ini \
     && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/* \
     && echo "newrelic.distributed_tracing_enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
-    && echo "newrelic.application_logging.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
+    && echo "newrelic.application_logging.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
+    && echo "newrelic.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
 
 RUN echo "---> Adding Tini" && \
     wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
@@ -80,6 +81,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY apache-run.sh /usr/bin/apache-run
+COPY ./bin /usr/bin/
 
 RUN chmod a+x /usr/bin/apache-run
 
