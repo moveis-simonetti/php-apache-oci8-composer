@@ -1,20 +1,7 @@
 #!/bin/bash
 
 if [[ ${XDEBUG_ENABLED} == true ]]; then
-    sudo rm -f /usr/local/etc/php/conf.d/xdebug.ini || true
-    echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-${PHP_BUILD_DATE}/xdebug.so" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    echo "xdebug.var_display_max_depth=5" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    echo "xdebug.idekey=${XDEBUG_IDEKEY}" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    echo "xdebug.remote_enable=1" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    echo "xdebug.remote_port=${XDEBUG_REMOTE_PORT}" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-
-    [[ ${XDEBUG_AUTOSTART} == true ]] && {
-        echo "xdebug.remote_autostart=on" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    } || echo "xdebug.remote_autostart=off" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-
-    [[ ${XDEBUG_CONNECT_BACK} == true ]] && {
-        echo "xdebug.remote_connect_back=1" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
-    } || echo "xdebug.remote_connect_back=0" | sudo tee -a /usr/local/etc/php/conf.d/xdebug.ini
+    sudo -E xdebug-set-mode ${XDEBUG_MODE:-debug}
 fi
 
 sudo -E newrelic-setup
