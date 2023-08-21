@@ -7,8 +7,9 @@ fi
 sudo -E newrelic-setup
 
 if [[ ${SESSION_HANDLER} == true ]]; then
+    sudo rm -f /usr/local/etc/php/conf.d/session-handler.ini
     echo "session.save_handler = ${SESSION_HANDLER_NAME}" | sudo tee -a /usr/local/etc/php/conf.d/session-handler.ini
-    echo "session.save_path = ${SESSION_HANDLER_PATH}" | sudo tee -a /usr/local/etc/php/conf.d/session-handler.ini
+    echo "session.save_path = \"${SESSION_HANDLER_PATH}\"" | sudo tee -a /usr/local/etc/php/conf.d/session-handler.ini
 fi
 
 sudo rm -rf var/cache/* var/logs/* &&
