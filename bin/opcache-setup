@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ ${OPCACHE_ENABLED} == true ]]; then
+    echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+else
+    echo "opcache.enable=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+fi
