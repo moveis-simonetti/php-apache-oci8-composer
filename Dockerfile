@@ -21,6 +21,8 @@ ENV XDEBUG_REMOTE_PORT=9000
 ENV PHP_EXTENSION_WDDX=1
 ENV PHP_OPENSSL=1
 
+ENV CONTAINER_STARTED_LOCK=/var/lock/container.started
+
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
@@ -89,7 +91,10 @@ COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 COPY apache-run.sh /usr/bin/apache-run
 COPY ./bin /usr/bin/
 
-RUN chmod a+x /usr/bin/apache-run /usr/bin/xdebug-set-mode
+RUN touch /usr/bin/post-startup-hook && chmod a+x \
+    /usr/bin/apache-run \
+    /usr/bin/xdebug-set-mode \
+    /usr/bin/post-startup-hook
 
 USER www-data
 
