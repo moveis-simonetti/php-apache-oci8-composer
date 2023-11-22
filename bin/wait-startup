@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+while [ ! -f $CONTAINER_STARTED_LOCK ]; do
+    echo "Esperando startup do container..."
+    sleep 5
+done
+
+echo "Startup do container concluída."
