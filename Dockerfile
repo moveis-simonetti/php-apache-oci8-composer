@@ -89,7 +89,7 @@ COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 COPY apache-run.sh /usr/bin/apache-run
 COPY ./bin /usr/bin/
 
-RUN touch /usr/bin/post-startup-hook && chmod a+x \
+RUN chmod a+x \
     /usr/bin/apache-run \
     /usr/bin/xdebug-set-mode \
     /usr/bin/post-startup-hook
