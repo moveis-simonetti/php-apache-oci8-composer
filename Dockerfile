@@ -20,7 +20,7 @@ ENV \
     PHP_EXTENSION_WDDX=1 \
     PHP_OPENSSL=1
 
-ENV CONTAINER_STARTED_LOCK=/var/lock/container.started
+ENV CONTAINER_STARTED_LOCK=/var/lock/container.starting
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
