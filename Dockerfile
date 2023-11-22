@@ -85,7 +85,7 @@ COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY apache-run.sh /usr/bin/apache-run
 COPY ./bin /usr/bin/
 
-RUN touch /usr/bin/post-startup-hook && chmod a+x \
+RUN chmod a+x \
     /usr/bin/apache-run \
     /usr/bin/post-startup-hook
 
