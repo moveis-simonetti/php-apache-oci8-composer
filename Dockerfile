@@ -1,5 +1,5 @@
 # Container Base
-FROM php:8.3-rc-apache
+FROM php:8.3-apache
 
 ENV \
     NR_ENABLED=false \
