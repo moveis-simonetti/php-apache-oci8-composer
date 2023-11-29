@@ -18,7 +18,9 @@ ENV \
     XDEBUG_VERSION="-3.2.1" \
     XDEBUG_REMOTE_PORT=9000 \
     PHP_EXTENSION_WDDX=1 \
-    PHP_OPENSSL=1
+    PHP_OPENSSL=1 \
+    PHP_MEMORY_LIMIT="-1" \
+    PHP_USE_MEMORY_LIMIT_APACHE=true
 
 ENV CONTAINER_STARTED_LOCK=/var/lock/container.starting
 
@@ -78,7 +80,7 @@ RUN echo "---> Adding Tini" && \
 RUN echo "---> Config sudoers" && \
     echo "www-data  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN echo "---> Fix permissions" \
     && chown -R www-data:www-data /var/log/apache2 \
     && mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
@@ -86,13 +88,12 @@ RUN echo "---> Fix permissions" \
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
-COPY apache-run.sh /usr/bin/apache-run
-COPY ./bin /usr/bin/
+COPY configs/php-memory-limit.ini /usr/local/etc/php/conf.d/php-memory-limit.ini
+COPY configs/php-memory-limit-apache.ini.dist /usr/local/etc/php/conf.d/php-memory-limit-apache.ini.dist
+COPY ./bin /usr/local/bin/
 
 RUN chmod a+x \
-    /usr/bin/apache-run \
-    /usr/bin/xdebug-set-mode \
-    /usr/bin/post-startup-hook
+    /usr/local/bin/*
 
 USER www-data
 
@@ -100,4 +101,5 @@ WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-CMD ["/tini", "--", "/usr/bin/apache-run"]
+ENTRYPOINT [ "docker-php-entrypoint" ]
+CMD ["apache-run"]

@@ -11,6 +11,10 @@ fi
 sudo -E newrelic-setup
 sudo -E opcache-setup
 
+if [[ ${PHP_USE_MEMORY_LIMIT_APACHE} == true ]]; then
+    sudo cp /usr/local/etc/php/conf.d/php-memory-limit-apache.ini.dist /usr/local/etc/php/conf.d/php-memory-limit.ini
+fi
+
 if [[ ${SESSION_HANDLER} == true ]]; then
     sudo rm -f /usr/local/etc/php/conf.d/session-handler.ini
     echo "session.save_handler = ${SESSION_HANDLER_NAME}" | sudo tee -a /usr/local/etc/php/conf.d/session-handler.ini
