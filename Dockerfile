@@ -101,5 +101,4 @@ WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-ENTRYPOINT [ "docker-php-entrypoint" ]
 CMD ["apache-run"]
