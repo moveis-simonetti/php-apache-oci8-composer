@@ -12,7 +12,7 @@ sudo -E newrelic-setup
 sudo -E opcache-setup
 
 if [[ ${PHP_USE_MEMORY_LIMIT_APACHE} == true ]]; then
-    sudo cp /usr/local/etc/php/conf.d/php-memory-limit-apache.ini.dist /usr/local/etc/php/conf.d/php-memory-limit.ini
+    export PHP_MEMORY_LIMIT=128M
 fi
 
 if [[ ${SESSION_HANDLER} == true ]]; then

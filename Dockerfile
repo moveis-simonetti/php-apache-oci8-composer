@@ -89,7 +89,6 @@ COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 COPY configs/php-memory-limit.ini /usr/local/etc/php/conf.d/php-memory-limit.ini
-COPY configs/php-memory-limit-apache.ini.dist /usr/local/etc/php/conf.d/php-memory-limit-apache.ini.dist
 COPY ./bin /usr/local/bin/
 
 RUN chmod a+x \
