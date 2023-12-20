@@ -1,4 +1,4 @@
-FROM lojassimonetti/php-apache-oci8-composer:php8dot2
+FROM lojassimonetti/php-apache-oci8-composer:php8dot3
 
 USER root
 
