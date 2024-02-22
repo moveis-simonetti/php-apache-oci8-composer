@@ -29,6 +29,7 @@ rm -f $ini_file || true
 [[ $MODE == "off" ]] && exit
 
 echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-${PHP_BUILD_DATE}/xdebug.so" | tee -a $ini_file
+echo "xdebug.mode=$MODE" | tee -a $ini_file
 echo "xdebug.var_display_max_depth=5" | tee -a $ini_file
 
 [[ $MODE =~ "debug" ]] && {
