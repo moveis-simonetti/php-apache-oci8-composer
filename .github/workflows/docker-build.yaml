@@ -29,10 +29,19 @@ jobs:
         with:
           images: lojassimonetti/php-apache-oci8-composer
 
+      - name: Should push?
+        id: shoudPush
+        run: |
+          if [[ ${{ github.event.ref }} =~ ^refs/tags/php[0-9]dot[0-9]$ ]]; then
+              echo "match=true" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.event.ref }} = "master" ]]; then
+              echo "match=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          push: ${{ steps.shoudPush.outputs.match == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
