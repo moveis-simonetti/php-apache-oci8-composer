@@ -1,5 +1,5 @@
 # Container Base
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 ENV \
     NR_ENABLED=false \
@@ -15,7 +15,7 @@ ENV \
     XDEBUG_CONNECT_BACK=true \
     XDEBUG_ENABLED=false \
     XDEBUG_IDEKEY="docker" \
-    XDEBUG_VERSION="-3.2.1" \
+    XDEBUG_VERSION="-3.3.0alpha3" \
     XDEBUG_REMOTE_PORT=9000 \
     PHP_EXTENSION_WDDX=1 \
     PHP_OPENSSL=1
