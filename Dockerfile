@@ -15,7 +15,7 @@ ENV \
     XDEBUG_CONNECT_BACK=true \
     XDEBUG_ENABLED=false \
     XDEBUG_IDEKEY="docker" \
-    XDEBUG_VERSION="-3.3.0alpha3" \
+    XDEBUG_VERSION="-3.3.2" \
     XDEBUG_REMOTE_PORT=9000 \
     PHP_EXTENSION_WDDX=1 \
     PHP_OPENSSL=1
@@ -33,7 +33,7 @@ RUN a2enmod rewrite unique_id
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap imap
+    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap imap ftp
 
 RUN echo "---> Adding Redis" && \
     pecl install redis && \
