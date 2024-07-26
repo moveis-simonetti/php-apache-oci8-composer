@@ -1,8 +1,8 @@
 # Container Base
 FROM php:7.4-apache
 
-ENV http_proxy ${HTTP_PROXY}
-ENV https_proxy ${HTTP_PROXY}
+ENV http_proxy=${HTTP_PROXY}
+ENV https_proxy=${HTTP_PROXY}
 ENV NR_ENABLED=false
 ENV NR_DISTRIBUTED_TRACING_ENABLED=false
 ENV NR_APPLICATION_LOGGING_ENABLED=false
