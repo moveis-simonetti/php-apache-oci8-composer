@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget vim superv
     sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN a2enmod rewrite unique_id
+RUN a2enmod rewrite unique_id headers
 
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -83,6 +83,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
     mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
 
 COPY configs/ports.conf /etc/apache2/ports.conf
+COPY configs/headers.conf /etc/apache2/conf-enabled/headers.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY apache-run.sh /usr/bin/apache-run
 COPY ./bin /usr/bin/
