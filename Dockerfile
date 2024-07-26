@@ -1,9 +1,11 @@
 # Container Base
 FROM php:8.0-apache
 
-ENV http_proxy ${HTTP_PROXY}
-ENV https_proxy ${HTTP_PROXY}
+ENV http_proxy=${HTTP_PROXY}
+ENV https_proxy=${HTTP_PROXY}
 ENV NR_ENABLED=false
+ENV NR_DISTRIBUTED_TRACING_ENABLED=false
+ENV NR_APPLICATION_LOGGING_ENABLED=false
 ENV NR_APP_NAME=""
 ENV NR_LICENSE_KEY=""
 ENV NR_VERSION=""
@@ -29,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget vim superv
     sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev musl-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN a2enmod rewrite unique_id
+RUN a2enmod rewrite unique_id headers
 
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -86,6 +88,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
     mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
 
 COPY configs/ports.conf /etc/apache2/ports.conf
+COPY configs/headers.conf /etc/apache2/conf-enabled/headers.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 COPY apache-run.sh /usr/bin/apache-run
