@@ -16,6 +16,7 @@ ENV \
     XDEBUG_ENABLED=false \
     XDEBUG_IDEKEY="docker" \
     XDEBUG_VERSION="-3.2.1" \
+    REDIS_VERSION="-5.3.7" \
     XDEBUG_REMOTE_PORT=9000 \
     PHP_EXTENSION_WDDX=1 \
     PHP_OPENSSL=1 \
@@ -35,7 +36,7 @@ RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap imap
 
 RUN echo "---> Adding Redis" && \
-    pecl install redis && \
+    pecl install redis${REDIS_VERSION} && \
     docker-php-ext-enable redis
 
 RUN echo "---> Adding xDebug" && \
