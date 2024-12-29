@@ -1,5 +1,5 @@
 # Container Base
-FROM php:8.3-apache
+FROM php:8.3
 
 ENV \
     NR_ENABLED=false \
@@ -27,8 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget vim superv
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
     sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev musl-dev && \
     rm -rf /var/lib/apt/lists/*
-
-RUN a2enmod rewrite unique_id headers
 
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -59,6 +57,10 @@ RUN echo "---> Configure Opcache" && \
     echo "opcache.enable=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini && \
     echo "opcache.enable_cli=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
+RUN echo "---> Swoole" && \
+    pecl install swoole -D 'enable-http2="yes"' && \
+    docker-php-ext-enable swoole
+
 RUN echo "---> Adding NewRelic" && \
     apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests gnupg2 \
     && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | sudo tee /etc/apt/sources.list.d/newrelic.list \
@@ -80,18 +82,15 @@ RUN echo "---> Config sudoers" && \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN echo "---> Fix permissions" \
-    && chown -R www-data:www-data /var/log/apache2 \
     && mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
 
-COPY configs/ports.conf /etc/apache2/ports.conf
-COPY configs/headers.conf /etc/apache2/conf-enabled/headers.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
-COPY apache-run.sh /usr/bin/apache-run
+COPY swoole-run.sh /usr/bin/swoole-run
 COPY ./bin /usr/bin/
 
 RUN chmod a+x \
-    /usr/bin/apache-run \
+    /usr/bin/swoole-run \
     /usr/bin/xdebug-set-mode \
     /usr/bin/post-startup-hook
 
@@ -101,4 +100,4 @@ WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-CMD ["/tini", "--", "/usr/bin/apache-run"]
+CMD ["/tini", "--", "/usr/bin/swoole-run"]
