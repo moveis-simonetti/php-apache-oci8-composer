@@ -14,7 +14,7 @@ ENV \
     XDEBUG_CONNECT_BACK=true \
     XDEBUG_ENABLED=false \
     XDEBUG_IDEKEY="docker" \
-    XDEBUG_VERSION="-3.4.0beta1" \
+    XDEBUG_VERSION="-3.4.1" \
     REDIS_VERSION="-6.1.0" \
     IMAP_VERSION="" \
     XDEBUG_REMOTE_PORT=9000 \
@@ -66,19 +66,18 @@ RUN echo "---> Adding Tini" && \
     wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
     chmod +x /tini
 
-# reativar quando liberar
-# RUN echo "---> Adding NewRelic" && \
-#     apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests gnupg2 \
-#     && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | sudo tee /etc/apt/sources.list.d/newrelic.list \
-#     && wget -O- https://download.newrelic.com/548C16BF.gpg | sudo apt-key add - \
-#     && sudo apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests newrelic-php5 \
-#     && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=1 newrelic-install install \
-#     && cp /usr/lib/newrelic-php5/scripts/newrelic.ini.template /usr/local/etc/php/conf.d/newrelic.ini \
-#     && chown www-data:www-data /usr/local/etc/php/conf.d/newrelic.ini && chmod a+rw /usr/local/etc/php/conf.d/newrelic.ini \
-#     && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/* #\
-#     && echo "newrelic.distributed_tracing_enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
-#     && echo "newrelic.application_logging.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
-#     && echo "newrelic.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
+RUN echo "---> Adding NewRelic" && \
+    apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests gnupg2 \
+    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | sudo tee /etc/apt/sources.list.d/newrelic.list \
+    && wget -O- https://download.newrelic.com/548C16BF.gpg | sudo apt-key add - \
+    && sudo apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests newrelic-php5 \
+    && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=1 newrelic-install install \
+    && cp /usr/lib/newrelic-php5/scripts/newrelic.ini.template /usr/local/etc/php/conf.d/newrelic.ini \
+    && chown www-data:www-data /usr/local/etc/php/conf.d/newrelic.ini && chmod a+rw /usr/local/etc/php/conf.d/newrelic.ini \
+    && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/* #\
+    && echo "newrelic.distributed_tracing_enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
+    && echo "newrelic.application_logging.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
+    && echo "newrelic.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
 
 RUN echo "---> Config sudoers" && \
     echo "www-data  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers
