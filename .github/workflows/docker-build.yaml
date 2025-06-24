@@ -32,9 +32,11 @@ jobs:
       - name: Should push?
         id: shoudPush
         run: |
-          if [[ ${{ github.event.ref }} =~ ^refs/heads/php[0-9]dot[0-9]$ ]]; then
+          if [[ ${{ github.event.ref }} = "refs/heads/master" ]]; then
               echo "match=true" >> $GITHUB_OUTPUT
-          elif [[ ${{ github.event.ref }} = "refs/heads/master" ]]; then
+          elif [[ ${{ github.event.ref }} =~ ^refs/heads/php[0-9]dot[0-9]$ ]]; then
+              echo "match=true" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.event.ref }} =~ ^refs/heads/php[0-9]dot[0-9]-mongodb$ ]]; then
               echo "match=true" >> $GITHUB_OUTPUT
           fi
 

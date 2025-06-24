@@ -1,7 +1,8 @@
 all: build
 
 IMAGE=lojassimonetti/php-apache-oci8-composer
-TAG=$(shell git branch | grep \* | cut -d ' ' -f2)
+tag=$(shell git branch | grep \* | cut -d ' ' -f2)
+TAG=$(shell [[ "$(tag)" == "master" ]] && echo "latest" || echo $(tag))
 
 build:
 	docker build --pull . -t $(IMAGE):$(TAG)
