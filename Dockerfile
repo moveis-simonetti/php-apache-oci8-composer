@@ -27,7 +27,7 @@ ENV CONTAINER_STARTED_LOCK=/var/lock/container.starting
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
-    libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
+    libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev libpq-dev \
     sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev && \
     rm -rf /var/lib/apt/lists/*
 
@@ -36,7 +36,7 @@ RUN a2enmod rewrite unique_id headers
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap imap
+    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql pdo_pgsql calendar exif gettext shmop soap sockets intl pcntl xsl ldap imap
 
 RUN echo "---> Adding Redis" && \
     pecl install redis && \
