@@ -1,5 +1,5 @@
 # Container Base
-FROM php:8.2-apache
+FROM php:8.2-apache-bookworm
 
 ENV \
     NR_ENABLED=false \
