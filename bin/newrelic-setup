@@ -13,6 +13,19 @@ if [[ ${NR_ENABLED} == true ]]; then
         echo "newrelic.application_logging.enabled = true" | tee -a /usr/local/etc/php/conf.d/newrelic.ini
     fi
 
+    if [[ ${NR_IGNORE_DEFAULT_EXCEPTION} == true ]]; then
+        NR_DEFAULT_IGNORED_EXCEPTIONS="Simonetti\Infra\Exceptions\IgnorableExceptionInterface"
+        if [[ "${NR_IGNORED_EXECEPTIONS}" != "" ]]; then
+            NR_IGNORED_EXCEPTIONS="${NR_DEFAULT_IGNORED_EXCEPTIONS},${NR_IGNORED_EXECEPTIONS}"
+        else
+            NR_IGNORED_EXCEPTIONS="${NR_DEFAULT_IGNORED_EXCEPTIONS}"
+        fi
+    fi
+
+    if [[ "${NR_IGNORED_EXECEPTIONS}" != "" ]]; then
+        echo "newrelic.error_collector.ignore_exceptions = ${NR_IGNORED_EXECEPTIONS}" | tee -a /usr/local/etc/php/conf.d/newrelic.ini
+    fi
+
 else
     echo "newrelic.enabled = false" | tee -a /usr/local/etc/php/conf.d/newrelic.ini
 fi
