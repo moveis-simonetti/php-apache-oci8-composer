@@ -59,6 +59,7 @@ jobs:
       - push_to_registry
 
     strategy:
+      fail-fast: false
       matrix:
         variation:
           - pgsql
