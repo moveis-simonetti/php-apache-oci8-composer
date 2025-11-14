@@ -99,4 +99,4 @@ WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-CMD ["/tini", "--", "/usr/bin/swoole-run.sh"]
+CMD ["/tini", "--", "/usr/bin/swoole-run"]
