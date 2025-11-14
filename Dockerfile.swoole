@@ -86,7 +86,6 @@ RUN echo "---> Fix permissions" \
 
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
-COPY swoole-run.sh /usr/bin/swoole-run
 COPY ./bin /usr/bin/
 
 RUN chmod a+x \
@@ -100,4 +99,4 @@ WORKDIR "/var/www/html"
 
 EXPOSE 8080 9001
 
-CMD ["/tini", "--", "/usr/bin/swoole-run"]
+CMD ["/tini", "--", "/usr/bin/swoole-run.sh"]
