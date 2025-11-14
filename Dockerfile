@@ -3,6 +3,8 @@ FROM php:8.3-apache-bookworm
 
 ENV \
     NR_ENABLED=false \
+    NR_DISTRIBUTED_TRACING_ENABLED=false \
+    NR_APPLICATION_LOGGING_ENABLED=false \
     NR_APP_NAME="" \
     NR_LICENSE_KEY="" \
     NR_VERSION="" \
