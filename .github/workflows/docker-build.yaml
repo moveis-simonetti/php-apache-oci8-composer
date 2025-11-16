@@ -33,6 +33,9 @@ on:
       variations:
         type: string
         required: true
+      push:
+        type: boolean
+        default: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
 jobs:
   build:
@@ -84,18 +87,11 @@ jobs:
           tags: |
             type=raw,value=${{ inputs.name }},enable=true
 
-      - name: Should push?
-        id: shouldPush
-        run: |
-          if [[ ${{ github.event.ref }} = "refs/heads/master" ]]; then
-              echo "match=true" >> $GITHUB_OUTPUT
-          fi
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: ${{ steps.shouldPush.outputs.match == 'true' }}
+          push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -133,19 +129,12 @@ jobs:
           tags: |
             type=raw,value=${{ inputs.name }}-${{ matrix.variation }},enable=true
 
-      - name: Should push?
-        id: shouldPush
-        run: |
-          if [[ ${{ github.event.ref }} = "refs/heads/master" ]]; then
-              echo "match=true" >> $GITHUB_OUTPUT
-          fi
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           build-args: IMAGE_BASE=lojassimonetti/php-apache-oci8-composer:${{ inputs.name }}
           file: ./Dockerfile.${{ matrix.variation }}
-          push: ${{ steps.shouldPush.outputs.match == 'true' }}
+          push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
