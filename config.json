@@ -11,28 +11,6 @@
     "variations": ["pgsql"]
   },
   {
-    "name": "php8dot0",
-    "version": "8.0",
-    "base": "php:8.0-apache",
-    "xdebug_version": "3.2.1",
-    "redis_version": "5.3.7",
-    "imap_version": "",
-    "imap_type": "php-ext",
-    "php_erros_enabled": true,
-    "variations": []
-  },
-  {
-    "name": "php8dot1",
-    "version": "8.1",
-    "base": "php:8.1-apache-bookworm",
-    "xdebug_version": "3.2.1",
-    "redis_version": "5.3.7",
-    "imap_version": "",
-    "imap_type": "php-ext",
-    "php_erros_enabled": true,
-    "variations": []
-  },
-  {
     "name": "php8dot2",
     "version": "8.2",
     "base": "php:8.2-apache-bookworm",
