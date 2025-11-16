@@ -1,12 +1,11 @@
-# Container Base
-FROM php:8.3-apache-bookworm
+{{ $version := float64 (env "DOCKER_BUILD_VERSION") -}}
+FROM {{ env "DOCKER_BUILD_BASE" }}
 
 ENV \
     NR_ENABLED=false \
     NR_APP_NAME="" \
     NR_LICENSE_KEY="" \
     NR_VERSION="" \
-    PHP_BUILD_DATE="20211130" \
     PHP_OPCACHE_ENABLED=false \
     SESSION_HANDLER=false \
     SESSION_HANDLER_NAME="" \
@@ -15,8 +14,15 @@ ENV \
     XDEBUG_CONNECT_BACK=true \
     XDEBUG_ENABLED=false \
     XDEBUG_IDEKEY="docker" \
-    XDEBUG_VERSION="-3.3.2" \
-    REDIS_VERSION="-5.3.7" \
+    XDEBUG_VERSION="{{ if not (eq (env "DOCKER_BUILD_XDEBUG_VERSION") "") -}}
+        -{{ env "DOCKER_BUILD_XDEBUG_VERSION" }}
+    {{- end }}" \
+    REDIS_VERSION="{{ if not (eq (env "DOCKER_BUILD_REDIS_VERSION") "") -}}
+        -{{ env "DOCKER_BUILD_REDIS_VERSION" }}
+    {{- end }}" \
+    IMAP_VERSION="{{ if not (eq (env "DOCKER_BUILD_IMAP_VERSION") "") -}}
+        -{{ env "DOCKER_BUILD_IMAP_VERSION" }}
+    {{- end }}" \
     XDEBUG_REMOTE_PORT=9000 \
     PHP_EXTENSION_WDDX=1 \
     PHP_OPENSSL=1 \
@@ -25,13 +31,21 @@ ENV \
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
-    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev musl-dev && \
+    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev{{ if gt $version 7.4 }} musl-dev{{end}} && \
     rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+{{- if eq (env "DOCKER_BUILD_IMAP_TYPE") "php-ext" }}
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap imap ftp
+{{- end }}
+    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap ftp{{ if eq (env "DOCKER_BUILD_IMAP_TYPE") "php-ext" }} imap{{end}}
+{{- if eq (env "DOCKER_BUILD_IMAP_TYPE") "pecl" }}
+
+RUN echo "---> Adding IMAP" && \
+    pecl install imap${IMAP_VERSION} && \
+    docker-php-ext-enable imap
+{{ end }}
 
 RUN echo "---> Adding Redis" && \
     pecl install redis${REDIS_VERSION} && \
@@ -61,6 +75,10 @@ RUN echo "---> Swoole" && \
     pecl install swoole -D 'enable-http2="yes"' && \
     docker-php-ext-enable swoole
 
+RUN echo "---> Adding Tini" && \
+    wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
+    chmod +x /tini
+
 RUN echo "---> Adding NewRelic" && \
     apt-get update && apt-get install -y -q --no-install-recommends --no-install-suggests gnupg2 \
     && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | sudo tee /etc/apt/sources.list.d/newrelic.list \
@@ -73,10 +91,6 @@ RUN echo "---> Adding NewRelic" && \
     && echo "newrelic.application_logging.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
     && echo "newrelic.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
 
-RUN echo "---> Adding Tini" && \
-    wget -O /tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static && \
-    chmod +x /tini
-
 RUN echo "---> Config sudoers" && \
     echo "www-data  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers
 
@@ -85,7 +99,9 @@ RUN echo "---> Fix permissions" \
     && mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
 
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
+{{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "1" }}
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
+{{ end }}
 COPY ./bin /usr/bin/
 
 RUN chmod a+x \

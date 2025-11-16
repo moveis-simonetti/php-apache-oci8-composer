@@ -1,13 +1,15 @@
-# Container Base
-FROM php:8.4-apache-bookworm
+{{ $version := float64 (env "DOCKER_BUILD_VERSION") -}}
+FROM {{ env "DOCKER_BUILD_BASE" }}
 
 ENV \
     NR_ENABLED=false \
+    NR_DISTRIBUTED_TRACING_ENABLED=false \
+    NR_APPLICATION_LOGGING_ENABLED=false \
+    NR_IGNORE_DEFAULT_EXCEPTION=false \
+    NR_IGNORED_EXECEPTIONS="" \
     NR_APP_NAME="" \
     NR_LICENSE_KEY="" \
     NR_VERSION="" \
-    NR_IGNORE_DEFAULT_EXCEPTION=false \
-    NR_IGNORED_EXECEPTIONS="" \
     PHP_OPCACHE_ENABLED=false \
     SESSION_HANDLER=false \
     SESSION_HANDLER_NAME="" \
@@ -16,9 +18,15 @@ ENV \
     XDEBUG_CONNECT_BACK=true \
     XDEBUG_ENABLED=false \
     XDEBUG_IDEKEY="docker" \
-    XDEBUG_VERSION="-3.4.1" \
-    REDIS_VERSION="-6.1.0" \
-    IMAP_VERSION="" \
+    XDEBUG_VERSION="{{ if not (eq (env "DOCKER_BUILD_XDEBUG_VERSION") "") -}}
+        -{{ env "DOCKER_BUILD_XDEBUG_VERSION" }}
+    {{- end }}" \
+    REDIS_VERSION="{{ if not (eq (env "DOCKER_BUILD_REDIS_VERSION") "") -}}
+        -{{ env "DOCKER_BUILD_REDIS_VERSION" }}
+    {{- end }}" \
+    IMAP_VERSION="{{ if not (eq (env "DOCKER_BUILD_IMAP_VERSION") "") -}}
+        -{{ env "DOCKER_BUILD_IMAP_VERSION" }}
+    {{- end }}" \
     XDEBUG_REMOTE_PORT=9000 \
     PHP_EXTENSION_WDDX=1 \
     PHP_OPENSSL=1 \
@@ -27,18 +35,23 @@ ENV \
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
-    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev musl-dev && \
+    sudo zlib1g zlib1g-dev libzip4 libzip-dev zip unzip librabbitmq-dev{{ if gt $version 7.4 }} musl-dev{{end}} && \
     rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite unique_id headers
 
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap ftp
+{{- if eq (env "DOCKER_BUILD_IMAP_TYPE") "php-ext" }}
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+{{- end }}
+    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql calendar exif gettext shmop soap sockets intl pcntl xsl ldap ftp{{ if eq (env "DOCKER_BUILD_IMAP_TYPE") "php-ext" }} imap{{end}}
+{{- if eq (env "DOCKER_BUILD_IMAP_TYPE") "pecl" }}
 
 RUN echo "---> Adding IMAP" && \
     pecl install imap${IMAP_VERSION} && \
     docker-php-ext-enable imap
+{{ end }}
 
 RUN echo "---> Adding Redis" && \
     pecl install redis${REDIS_VERSION} && \
@@ -52,12 +65,8 @@ RUN echo "---> Adding Zip" && \
     docker-php-ext-enable zip
 
 RUN echo "---> Adding AMQp" && \
-    apt-get update && apt-get install -y -f librabbitmq-dev libssh-dev \
-    && docker-php-source extract \
-    && mkdir /usr/src/php/ext/amqp \
-    && curl -L https://github.com/php-amqp/php-amqp/archive/master.tar.gz | tar -xzC /usr/src/php/ext/amqp --strip-components=1 \
-    && docker-php-ext-install amqp \
-    && docker-php-ext-enable amqp
+    pecl install amqp && \
+    docker-php-ext-enable amqp
 
 RUN echo "---> Configure Opcache" && \
     docker-php-ext-install opcache && \
@@ -76,7 +85,7 @@ RUN echo "---> Adding NewRelic" && \
     && NR_INSTALL_USE_CP_NOT_LN=1 NR_INSTALL_SILENT=1 newrelic-install install \
     && cp /usr/lib/newrelic-php5/scripts/newrelic.ini.template /usr/local/etc/php/conf.d/newrelic.ini \
     && chown www-data:www-data /usr/local/etc/php/conf.d/newrelic.ini && chmod a+rw /usr/local/etc/php/conf.d/newrelic.ini \
-    && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/* #\
+    && apt-get remove -y gnupg2 && rm -rf /var/lib/apt/lists/* \
     && echo "newrelic.distributed_tracing_enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
     && echo "newrelic.application_logging.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini \
     && echo "newrelic.enabled = false" | sudo tee -a /usr/local/etc/php/conf.d/newrelic.ini
@@ -85,6 +94,7 @@ RUN echo "---> Config sudoers" && \
     echo "www-data  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 RUN echo "---> Fix permissions" \
     && chown -R www-data:www-data /var/log/apache2 \
     && mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
@@ -92,7 +102,9 @@ RUN echo "---> Fix permissions" \
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/headers.conf /etc/apache2/conf-enabled/headers.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
+{{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "1" }}
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
+{{ end }}
 COPY apache-run.sh /usr/bin/apache-run
 COPY ./bin /usr/bin/
 

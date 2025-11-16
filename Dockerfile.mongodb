@@ -1,0 +1,10 @@
+ARG IMAGE_BASE
+FROM ${IMAGE_BASE}
+
+USER root
+
+RUN echo "---> Mongo DB" && \
+    pecl install mongodb && \
+    docker-php-ext-enable mongodb
+
+USER www-data:www-data
