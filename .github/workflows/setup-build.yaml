@@ -45,5 +45,5 @@ jobs:
       redis_version: ${{ matrix.config.redis_version }}
       imap_version: ${{ matrix.config.imap_version }}
       imap_type: ${{ matrix.config.imap_type }}
-      php_erros_enabled: ${{ matrix.config.php_erros_enabled }}
+      php_errors_enabled: ${{ matrix.config.php_errors_enabled }}
       variations: ${{ toJson(matrix.config.variations) }}

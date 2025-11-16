@@ -7,7 +7,7 @@
     "redis_version": "5.3.7",
     "imap_version": "",
     "imap_type": "php-ext",
-    "php_erros_enabled": false,
+    "php_errors_enabled": false,
     "variations": ["pgsql"]
   },
   {
@@ -18,7 +18,7 @@
     "redis_version": "5.3.7",
     "imap_version": "",
     "imap_type": "php-ext",
-    "php_erros_enabled": true,
+    "php_errors_enabled": true,
     "variations": []
   },
   {
@@ -29,7 +29,7 @@
     "redis_version": "5.3.7",
     "imap_version": "",
     "imap_type": "php-ext",
-    "php_erros_enabled": true,
+    "php_errors_enabled": true,
     "variations": ["grpc", "mongodb", "mongodb-1.21.0"]
   },
   {
@@ -41,7 +41,7 @@
     "redis_version": "5.3.7",
     "imap_version": "",
     "imap_type": "php-ext",
-    "php_erros_enabled": true,
+    "php_errors_enabled": true,
     "variations": ["grpc"]
   },
   {
@@ -52,7 +52,7 @@
     "redis_version": "6.1.0",
     "imap_version": "",
     "imap_type": "pecl",
-    "php_erros_enabled": true,
+    "php_errors_enabled": true,
     "variations": ["grpc", "mongodb"]
   }
 ]
