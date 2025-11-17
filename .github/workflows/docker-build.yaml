@@ -70,8 +70,12 @@ jobs:
         run: |
           go-replace --mode=template ./${{ inputs.template }} -o ./Dockerfile
 
-      - name: dump Dockerfile
-        run: cat Dockerfile
+      - name: add Dockerfile to summary
+        run: |
+          echo '### Dockerfile generated for ${{ inputs.name }}' >> $GITHUB_STEP_SUMMARY
+          echo '```dockerfile' >> $GITHUB_STEP_SUMMARY
+          cat Dockerfile >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
