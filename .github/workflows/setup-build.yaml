@@ -1,0 +1,49 @@
+name: Publish Docker image
+
+on:
+  push:
+
+jobs:
+  setup:
+    name: Setup Matrix Build
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    outputs:
+      versions: ${{ steps.read.outputs.versions }}
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v5
+
+      - name: read configs
+        id: read
+        run: |
+          echo "versions=$(cat config.json | jq . --compact-output)" >> "$GITHUB_OUTPUT"
+
+  docker_build_push:
+    name: Build and Push
+    needs:
+      - setup
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(needs.setup.outputs.versions) }}
+
+    uses: ./.github/workflows/docker-build.yaml
+    secrets: inherit
+    with:
+      name: ${{ matrix.config.name }}
+      base: ${{ matrix.config.base }}
+      template: ${{ matrix.config.template || 'Dockerfile.tmpl' }}
+      version: ${{ matrix.config.version }}
+      xdebug_version: ${{ matrix.config.xdebug_version }}
+      redis_version: ${{ matrix.config.redis_version }}
+      imap_version: ${{ matrix.config.imap_version }}
+      imap_type: ${{ matrix.config.imap_type }}
+      php_errors_enabled: ${{ matrix.config.php_errors_enabled }}
+      variations: ${{ toJson(matrix.config.variations) }}

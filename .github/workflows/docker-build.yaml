@@ -1,13 +1,115 @@
-name: Publish Docker image
+name: Build & Publish
 
 on:
-  push:
-    branches: ["master", "php*"]
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      name:
+        type: string
+        required: true
+      template:
+        type: string
+        required: false
+      base:
+        type: string
+        required: true
+      xdebug_version:
+        type: string
+        required: true
+      redis_version:
+        type: string
+        required: true
+      imap_type:
+        type: string
+        required: true
+      imap_version:
+        type: string
+        required: true
+      php_errors_enabled:
+        type: boolean
+        required: true
+      variations:
+        type: string
+        required: true
+      push:
+        type: boolean
+        default: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
 jobs:
-  push_to_registry:
-    name: Push Docker image to Docker Hub
+  build:
+    name: Build Docker image
     runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: install go-replace
+        env:
+          GOREPLACE_VERSION: 22.9.0
+        run: |
+          wget -O /usr/local/bin/go-replace \
+            https://github.com/webdevops/go-replace/releases/download/$GOREPLACE_VERSION/go-replace.linux.amd64
+          chmod +x /usr/local/bin/go-replace
+
+      - name: build Dockerfile
+        env:
+          DOCKER_BUILD_VERSION: ${{ inputs.version }}
+          DOCKER_BUILD_BASE: ${{ inputs.base }}
+          DOCKER_BUILD_XDEBUG_VERSION: ${{ inputs.xdebug_version }}
+          DOCKER_BUILD_REDIS_VERSION: ${{ inputs.redis_version }}
+          DOCKER_BUILD_IMAP_TYPE: ${{ inputs.imap_type }}
+          DOCKER_BUILD_IMAP_VERSION: ${{ inputs.imap_version }}
+          DOCKER_BUILD_PHP_ERRORS_ENABLED: ${{ inputs.php_errors_enabled && '1' || '0' }}
+        run: |
+          go-replace --mode=template ./${{ inputs.template }} -o ./Dockerfile
+
+      - name: add Dockerfile to summary
+        run: |
+          echo '### Dockerfile generated for ${{ inputs.name }}' >> $GITHUB_STEP_SUMMARY
+          echo '```dockerfile' >> $GITHUB_STEP_SUMMARY
+          cat Dockerfile >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: lojassimonetti/php-apache-oci8-composer
+          tags: |
+            type=raw,value=${{ inputs.name }},enable=true
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ inputs.push }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build_variations:
+    name: Build image variation
+    runs-on: ubuntu-latest
+
+    needs:
+      - build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        variation: ${{ fromJson(inputs.variations) }}
 
     permissions:
       packages: write
@@ -28,22 +130,15 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: lojassimonetti/php-apache-oci8-composer
-
-      - name: Should push?
-        id: shoudPush
-        run: |
-          if [[ ${{ github.event.ref }} = "refs/heads/master" ]]; then
-              echo "match=true" >> $GITHUB_OUTPUT
-          elif [[ ${{ github.event.ref }} =~ ^refs/heads/php[0-9]dot[0-9]$ ]]; then
-              echo "match=true" >> $GITHUB_OUTPUT
-          elif [[ ${{ github.event.ref }} =~ ^refs/heads/php[0-9]dot[0-9]-mongodb$ ]]; then
-              echo "match=true" >> $GITHUB_OUTPUT
-          fi
+          tags: |
+            type=raw,value=${{ inputs.name }}-${{ matrix.variation }},enable=true
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: ${{ steps.shoudPush.outputs.match == 'true' }}
+          build-args: IMAGE_BASE=lojassimonetti/php-apache-oci8-composer:${{ inputs.name }}
+          file: ./Dockerfile.${{ matrix.variation }}
+          push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
