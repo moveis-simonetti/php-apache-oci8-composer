@@ -27,6 +27,9 @@ on:
       imap_version:
         type: string
         required: true
+      nr_version:
+        type: string
+        required: true
       php_errors_enabled:
         type: boolean
         required: true
@@ -66,6 +69,7 @@ jobs:
           DOCKER_BUILD_REDIS_VERSION: ${{ inputs.redis_version }}
           DOCKER_BUILD_IMAP_TYPE: ${{ inputs.imap_type }}
           DOCKER_BUILD_IMAP_VERSION: ${{ inputs.imap_version }}
+          DOCKER_BUILD_NR_VERSION: ${{ inputs.nr_version }}
           DOCKER_BUILD_PHP_ERRORS_ENABLED: ${{ inputs.php_errors_enabled && '1' || '0' }}
         run: |
           go-replace --mode=template ./${{ inputs.template }} -o ./Dockerfile
