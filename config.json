@@ -7,6 +7,7 @@
     "redis_version": "5.3.7",
     "imap_version": "",
     "imap_type": "php-ext",
+    "nr_version": "11.10.0.24",
     "php_errors_enabled": false,
     "variations": ["pgsql"]
   },
