@@ -89,6 +89,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log in to Harbor
+        run: |
+          echo ${{ secrets.HARBOR_PASSWORD }} | docker login ${{ secrets.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+
+      - name: Log in to Harbor
         uses: docker/login-action@v3
         if: ${{ inputs.push }}
         with:
