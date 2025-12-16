@@ -31,7 +31,7 @@
     "imap_version": "",
     "imap_type": "php-ext",
     "php_errors_enabled": true,
-    "variations": ["grpc", "mongodb", "mongodb-1.21.0"]
+    "variations": ["grpc", "mongodb", "mongodb-1.21.0", "pgsql"]
   },
   {
     "name": "php8dot3-swoole",
