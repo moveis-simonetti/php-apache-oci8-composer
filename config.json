@@ -55,5 +55,16 @@
     "imap_type": "pecl",
     "php_errors_enabled": true,
     "variations": ["grpc", "mongodb"]
+  },
+  {
+    "name": "php8dot5",
+    "version": "8.5",
+    "base": "php:8.5-apache-bookworm",
+    "xdebug_version": "3.5.0",
+    "redis_version": "6.3.0",
+    "imap_version": "",
+    "imap_type": "pecl",
+    "php_errors_enabled": true,
+    "variations": []
   }
 ]
