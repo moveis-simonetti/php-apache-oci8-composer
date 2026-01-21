@@ -69,7 +69,6 @@ RUN echo "---> Adding AMQp" && \
     docker-php-ext-enable amqp
 
 RUN echo "---> Configure Opcache" && \
-    docker-php-ext-install opcache && \
     echo "opcache.enable=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini && \
     echo "opcache.enable_cli=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
