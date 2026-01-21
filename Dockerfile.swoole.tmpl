@@ -104,7 +104,7 @@ RUN echo "---> Fix permissions" \
     && mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer
 
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
-{{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "1" }}
+{{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "true" }}
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 {{ end }}
 COPY ./bin /usr/bin/

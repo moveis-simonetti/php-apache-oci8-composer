@@ -107,7 +107,7 @@ RUN echo "---> Fix permissions" \
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/headers.conf /etc/apache2/conf-enabled/headers.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
-{{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "1" }}
+{{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "true" }}
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 {{ end }}
 COPY apache-run.sh /usr/bin/apache-run
