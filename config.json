@@ -9,6 +9,7 @@
     "imap_type": "php-ext",
     "nr_version": "11.10.0.24",
     "php_errors_enabled": false,
+    "opcache_installed": false,
     "variations": ["pgsql"]
   },
   {
@@ -20,6 +21,7 @@
     "imap_version": "",
     "imap_type": "php-ext",
     "php_errors_enabled": true,
+    "opcache_installed": false,
     "variations": []
   },
   {
@@ -31,6 +33,7 @@
     "imap_version": "",
     "imap_type": "php-ext",
     "php_errors_enabled": true,
+    "opcache_installed": false,
     "variations": ["grpc", "mongodb", "mongodb-1.21.0", "pgsql"]
   },
   {
@@ -43,6 +46,7 @@
     "imap_version": "",
     "imap_type": "php-ext",
     "php_errors_enabled": true,
+    "opcache_installed": false,
     "variations": ["grpc"]
   },
   {
@@ -54,6 +58,19 @@
     "imap_version": "",
     "imap_type": "pecl",
     "php_errors_enabled": true,
+    "opcache_installed": false,
     "variations": ["grpc", "mongodb"]
+  },
+  {
+    "name": "php8dot5",
+    "version": "8.5",
+    "base": "php:8.5-apache-bookworm",
+    "xdebug_version": "3.5.0",
+    "redis_version": "6.3.0",
+    "imap_version": "",
+    "imap_type": "pecl",
+    "php_errors_enabled": true,
+    "opcache_installed": true,
+    "variations": []
   }
 ]

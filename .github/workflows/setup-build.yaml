@@ -47,4 +47,5 @@ jobs:
       imap_type: ${{ matrix.config.imap_type }}
       nr_version: ${{ matrix.config.nr_version || '' }}
       php_errors_enabled: ${{ matrix.config.php_errors_enabled }}
+      opcache_installed: ${{ matrix.config.opcache_installed || false }}
       variations: ${{ toJson(matrix.config.variations) }}

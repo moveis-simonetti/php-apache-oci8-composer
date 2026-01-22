@@ -33,6 +33,9 @@ on:
       php_errors_enabled:
         type: boolean
         required: true
+      opcache_installed:
+        type: boolean
+        required: true
       variations:
         type: string
         required: true
@@ -71,6 +74,7 @@ jobs:
           DOCKER_BUILD_IMAP_VERSION: ${{ inputs.imap_version }}
           DOCKER_BUILD_NR_VERSION: ${{ inputs.nr_version }}
           DOCKER_BUILD_PHP_ERRORS_ENABLED: ${{ inputs.php_errors_enabled && 'true' || 'false' }}
+          DOCKER_BUILD_OPCACHE_INSTALLED: ${{ inputs.opcache_installed && 'true' || 'false' }}
         run: |
           go-replace --mode=template ./${{ inputs.template }} -o ./Dockerfile
 
