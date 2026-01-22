@@ -73,8 +73,8 @@ jobs:
           DOCKER_BUILD_IMAP_TYPE: ${{ inputs.imap_type }}
           DOCKER_BUILD_IMAP_VERSION: ${{ inputs.imap_version }}
           DOCKER_BUILD_NR_VERSION: ${{ inputs.nr_version }}
-          DOCKER_BUILD_PHP_ERRORS_ENABLED: ${{ inputs.php_errors_enabled && '1' || '0' }}
-          DOCKER_BUILD_OPCACHE_INSTALLED: ${{ inputs.opcache_installed && '1' || '0' }}
+          DOCKER_BUILD_PHP_ERRORS_ENABLED: ${{ inputs.php_errors_enabled && 'true' || 'false' }}
+          DOCKER_BUILD_OPCACHE_INSTALLED: ${{ inputs.opcache_installed && 'true' || 'false' }}
         run: |
           go-replace --mode=template ./${{ inputs.template }} -o ./Dockerfile
 
