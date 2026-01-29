@@ -71,6 +71,6 @@
     "imap_type": "pecl",
     "php_errors_enabled": true,
     "opcache_installed": true,
-    "variations": []
+    "variations": ["grpc", "mongodb"]
   }
 ]
