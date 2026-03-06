@@ -3,7 +3,7 @@ FROM ${IMAGE_BASE}
 
 USER root
 
-RUN echo "---> PGSQL" && \
+RUN echo "---> Ghostscript" && \
     apt-get update && \
     apt install -y --no-install-recommends ghostscript
 
