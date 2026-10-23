@@ -32,6 +32,12 @@ ENV \
     PHP_OPENSSL=1 \
     CONTAINER_STARTED_LOCK=/var/lock/container.starting
 
+{{ if eq $version 7.4 }}
+RUN sed -i -e 's|deb.debian.org|archive.debian.org|g' \
+    -e 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99archive
+{{ end }}
+
 RUN apt-get update && apt-get install -y --no-install-recommends wget vim supervisor libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev \
     libmcrypt-dev libpng-dev libssl-dev libaio1 git libcurl4-openssl-dev libxslt-dev \
     libldap2-dev libicu-dev libc-client-dev libkrb5-dev libsqlite3-dev libedit-dev \
@@ -109,6 +115,7 @@ RUN echo "---> Fix permissions" \
 COPY configs/ports.conf /etc/apache2/ports.conf
 COPY configs/headers.conf /etc/apache2/conf-enabled/headers.conf
 COPY configs/logs.conf /etc/apache2/conf-enabled/logs.conf
+COPY configs/php-security.ini /usr/local/etc/php/conf.d/php-security.ini
 {{- if eq (env "DOCKER_BUILD_PHP_ERRORS_ENABLED") "true" }}
 COPY configs/php-errors.ini /usr/local/etc/php/conf.d/php-errors.ini
 {{ end }}
